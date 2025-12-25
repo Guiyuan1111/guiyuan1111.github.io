@@ -68,3 +68,25 @@ git commit -m "xxxx"
 git push -f origin main
 ```
 
+报错
+
+```bash
+PS D:\guiyuan1111\CTF\server\Mizuki-master> git push -f origin main
+error: src refspec main does not match any
+error: failed to push some refs to 'https://github.com/Guiyuan1111/guiyuan1111.github.io.git'
+```
+
+分析：因为**本地只有 `master` 分支，无 `main` 分支**。
+
+解决：创建 `main` 分支并推送（适配 GitHub 默认规范）
+
+```bash
+# 1. 从 master 分支创建并切换到 main 分支
+git checkout -b main
+
+# 2. 强制推送 main 分支到远程
+git push -f origin main
+```
+
+
+
