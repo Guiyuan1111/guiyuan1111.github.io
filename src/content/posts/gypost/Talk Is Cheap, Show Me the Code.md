@@ -1,6 +1,6 @@
 ---
 title: Talk Is Cheap, Show Me the Code # 标题（需更改）
-published: 2025-12-25 17:45:00   # 发表时间（需更改）
+published: 2025-12-25T1:00:00   # 发表时间（需更改）
 pinned: true
 description: Linus Torvalds # 描述
 tags: # 标签

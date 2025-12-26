@@ -1,6 +1,6 @@
 ---
 title: Deepflow # 标题（需更改）
-published: 2025-12-24   # 发表时间（需更改）
+published: 2025-12-24T1:00:00   # 发表时间（需更改）
 pinned: true
 description: 课题 # 描述
 tags: # 标签
@@ -12,11 +12,11 @@ author: Guiyuan1111
 draft: false
 date: 2025-12-24
 # image:./cover.png 
-pubDate: 2025-12-24
+# pubDate: 2025-12-24
 permalink: 251224-1
 ---
 
-## 1 安装
+## 1 安装（Ubuntu Desktop）
 
 ### 1.1 部署 All-in-One K8s
 
@@ -48,7 +48,7 @@ sudo systemctl status ssh
 sudo systemctl restart ssh
 ```
 
-![查看 SSH 服务状态](PixPin_2025-12-24_15-16-47.png)
+![查看 SSH 服务状态](./Deepflow.assets/PixPin_2025-12-24_15-16-47.png)
 
 使用本地回环地址 `127.0.0.1` 测试 SSH 连接​,注意：这里输入的密码是当前用户（gy）的密码，不是 root 密码​
 
@@ -89,7 +89,7 @@ exit
 
 由于Ubuntu 默认在 `/etc/ssh/sshd_config` 中禁止 `root SSH` 登录，需修改配置文件开启该功能：
 找到 `#PermitRootLogin prohibit-password`（默认可能有注释符 #），将其修改为 `PermitRootLogin yes`（允许 root 密码登录），我的做法是在此行下面再加一行。
-![alt text](PixPin_2025-12-24_15-32-16.png)
+![alt text](./Deepflow.assets/PixPin_2025-12-24_15-32-16.png)
 `Esc->:wq`保存退出后，reboot一下Ubuntu，使配置生效
 使用毫秒镜像完成，这一点我是根据官网上给出的一下代码，进行了一个类比更改，没想到真的成功了。**注意先看下面两段代码之后的文字。**
 
@@ -209,3 +209,127 @@ global:
 EOF
 helm install deepflow -n deepflow deepflow/deepflow --version 6.6.018 --create-namespace -f values-custom.yaml
 ```
+
+## 2 安装（Ubuntu Sever）
+
+有朋友建议，我部署Deepflow反正也不太需要桌面版，不如使用Sever版本，提高性能。我一想，也对，我反正只用命令行，何故不使用Sever版本呢。
+
+### 2.1 安装sealoa
+
+先进入root用户
+
+```bash
+# install sealos
+curl -o /usr/bin/sealos https://deepflow-ce.oss-cn-beijing.aliyuncs.com/sealos/sealos && chmod +x /usr/bin/sealos
+```
+
+### 2.2 部署 All-in-One K8s
+
+这里的`IP_ADDR`和`PASSWORD`对应的是**当前这台安装了 OpenSSH Server 的 Ubuntu 服务器**（即你正在操作的、IP 为`192.168.109.161`的机器）。
+
+```bash
+# install All-in-One kubernetes cluster
+IP_ADDR="192.168.109.161"  # FIXME: Your IP address
+PASSWORD="asd"       # FIXME: Your SSH root password
+sealos run docker.1ms.run/labring/kubernetes:v1.24.0 docker.1ms.run/labring/calico:v3.22.1 --masters $IP_ADDR -p $PASSWORD
+```
+
+成功
+
+![image-20251226115820799](./Deepflow.assets/image-20251226115820799.png)
+
+```bash
+# remove kubernetes node taint
+kubectl taint node node-role.kubernetes.io/master- node-role.kubernetes.io/control-plane- --all
+```
+
+### 2.3 安装 Helm
+
+```bash
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
+![image-20251226121001959](./Deepflow.assets/image-20251226121001959.png)
+
+```bash
+helm repo add deepflow https://deepflow-ce.oss-cn-beijing.aliyuncs.com/chart/stable
+helm repo update deepflow # use `helm repo update` when helm < 3.7.0
+cat << EOF > values-custom.yaml
+global:
+  allInOneLocalStorage: true
+  image:
+      repository: registry.cn-beijing.aliyuncs.com/deepflow-ce
+EOF
+helm install deepflow -n deepflow deepflow/deepflow --version 6.6.018 --create-namespace -f values-custom.yaml
+```
+
+成功
+
+![image-20251226121338294](./Deepflow.assets/image-20251226121338294.png)
+
+### 2.4 访问 Grafana 页面
+
+执行 helm 部署 DeepFlow 时输出的内容提示了获取访问 Grafana 的 URL 和密码的命令，输出示例：
+
+```bash
+NODE_PORT=$(kubectl get --namespace deepflow -o jsonpath="{.spec.ports[0].nodePort}" services deepflow-grafana)
+NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+echo -e "Grafana URL: http://$NODE_IP:$NODE_PORT  \nGrafana auth: admin:deepflow"
+```
+
+我的输出
+
+```bash
+root@gy-sr:~# NODE_PORT=$(kubectl get --namespace deepflow -o jsonpath="{.spec.ports[0].nodePort}" services deepflow-grafana)
+root@gy-sr:~# NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+root@gy-sr:~# echo -e "Grafana URL: http://$NODE_IP:$NODE_PORT  \nGrafana auth: admin:deepflow"
+Grafana URL: http://192.168.109.161:32103  
+Grafana auth: admin:deepflow
+```
+
+### 2.5 地址无法访问及其修复
+
+出了一些bug，我们现在来修复，由于尝试了各种办法，不知道哪个是关键的，所以我们把环境恢复到`访问 Grafana 页面`这一步
+
+OK，到这里创建快照
+
+![image-20251226232301303](./Deepflow.assets/image-20251226232301303.png)
+
+尝试访问 Grafana 页面
+
+```bash
+root@gy-utsr:~# NODE_PORT=$(kubectl get --namespace deepflow -o jsonpath="{.spec.ports[0].nodePort}" services deepflow-grafana)
+root@gy-utsr:~# NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+root@gy-utsr:~# echo -e "Grafana URL: http://$NODE_IP:$NODE_PORT  \nGrafana auth: admin:deepflow"
+Grafana URL: http://192.168.109.162:31234  
+Grafana auth: admin:deepflow
+```
+
+访问失败
+
+![image-20251226233345372](./Deepflow.assets/image-20251226233345372.png)
+
+开始检查
+
+验证 Grafana 服务的端口与状态
+
+```bash
+# 查看 Pod 状态
+kubectl get pods -n deepflow
+```
+
+过一点时间就可以了，应该是时间问题
+
+刚开始失败
+
+![image-20251227002435835](./Deepflow.assets/image-20251227002435835.png)
+
+之后多刷新几次就成功了
+
+![image-20251227002316657](./Deepflow.assets/image-20251227002316657.png)
+
+访问 Grafana 页面，成功好耶
+
+![image-20251227002626885](./Deepflow.assets/image-20251227002626885.png)

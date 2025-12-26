@@ -1,6 +1,6 @@
 ---
 title: Git
-published: 2025-12-24
+published: 2025-12-23T1:00:00
 pinned: true
 description: Git相关问题
 tags:
@@ -10,10 +10,10 @@ licenseName: Unlicensed
 author: Guiyuan1111
 # sourceLink: https://github.com/emn178/markdown
 draft: false
-date: 2025-12-16
+# date: 2025-12-16
 # image:./cover.png 
-pubDate: 2025-12-23
-permalink: G251223
+# pubDate: 2025-12-23
+permalink: 251223-1
 ---
 
 ## 1 git命令
@@ -45,7 +45,7 @@ git push -u origin main
 
 ## last 杂
 
-![alt text](image.png)
+![alt text](./Git.assets/image.png)
 M和U是Git版本控制系统用于标识文件状态的符号：
 
 - M 表示 Modified（已修改） ：文件已经被修改但尚未提交到Git版本库。例如 建站.md 文件显示为M，说明它已经被修改过。
