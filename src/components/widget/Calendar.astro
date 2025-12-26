@@ -19,7 +19,12 @@ const posts = await getSortedPosts();
 const postDateMap = new Map<string, { id: string; title: string; published: Date }[]>();
 posts.forEach((post) => {
 	const date = new Date(post.data.published);
-	const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+	// 正确处理时区问题
+	const timeGap = siteConfig.timeZone || 8;
+	const utcTimestamp = date.getTime();
+	const targetTimestamp = utcTimestamp + (timeGap - date.getTimezoneOffset() / 60) * 60 * 60 * 1000;
+	const targetDate = new Date(targetTimestamp);
+	const dateKey = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, "0")}-${String(targetDate.getDate()).padStart(2, "0")}`;
 	const existingPosts = postDateMap.get(dateKey) || [];
 	postDateMap.set(dateKey, [...existingPosts, {
 		id: post.id,
@@ -29,11 +34,19 @@ posts.forEach((post) => {
 });
 
 // 序列化所有文章数据供客户端使用
-const allPostsData = posts.map((post) => ({
-	id: post.id,
-	title: post.data.title,
-	published: post.data.published.toISOString(),
-}));
+const allPostsData = posts.map((post) => {
+	const date = new Date(post.data.published);
+	// 正确处理时区问题
+	const timeGap = siteConfig.timeZone || 8;
+	const utcTimestamp = date.getTime();
+	const targetTimestamp = utcTimestamp + (timeGap - date.getTimezoneOffset() / 60) * 60 * 60 * 1000;
+	const targetDate = new Date(targetTimestamp);
+	return {
+		id: post.id,
+		title: post.data.title,
+		published: targetDate.toISOString(),
+	};
+});
 
 // 月份名称（使用 i18n）
 const monthNames = [
@@ -94,7 +107,7 @@ const yearSuffix = isChinese ? "年" : " ";
   </div>
 </WidgetLayout>
 
-<script is:inline define:vars={{ postDateMap: Object.fromEntries(postDateMap), allPostsData, monthNames, weekDays, yearSuffix }}>
+<script is:inline define:vars={{ postDateMap: Object.fromEntries(postDateMap), allPostsData, monthNames, weekDays, yearSuffix, timeZone: siteConfig.timeZone }}>
   // 客户端动态渲染日历
   function renderCalendar() {
     const now = new Date();
@@ -173,7 +186,12 @@ const yearSuffix = isChinese ? "年" : " ";
     // 获取当月所有文章
     const currentMonthPosts = allPostsData.filter(post => {
       const date = new Date(post.published);
-      return date.getFullYear() === currentYear && date.getMonth() === currentMonth;
+      // 正确处理时区问题
+      const timeGap = timeZone || 8;
+      const utcTimestamp = date.getTime();
+      const targetTimestamp = utcTimestamp + (timeGap - date.getTimezoneOffset() / 60) * 60 * 60 * 1000;
+      const targetDate = new Date(targetTimestamp);
+      return targetDate.getFullYear() === currentYear && targetDate.getMonth() === currentMonth;
     });
     
     // 显示当月文章列表

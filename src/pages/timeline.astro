@@ -70,7 +70,18 @@ const getTypeIcon = (type: string) => {
 // 格式化日期
 const formatDate = (dateString: string) => {
 	const date = new Date(dateString);
-	return date.toLocaleDateString("zh-CN", { year: "numeric", month: "long" });
+	const timeGap = siteConfig.timeZone || 8;
+	
+	// 调整日期到正确的时区
+	const utcTimestamp = date.getTime();
+	const targetTimestamp = utcTimestamp + (timeGap - date.getTimezoneOffset() / 60) * 60 * 60 * 1000;
+	const targetDate = new Date(targetTimestamp);
+
+	return targetDate.toLocaleDateString("zh-CN", { 
+		year: "numeric", 
+		month: "long",
+		timeZone: `Etc/GMT${timeGap >= 0 ? '-' : '+'}${Math.abs(timeGap)}`
+	});
 };
 
 // 计算持续时间

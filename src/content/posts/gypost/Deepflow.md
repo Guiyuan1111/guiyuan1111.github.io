@@ -333,3 +333,17 @@ kubectl get pods -n deepflow
 访问 Grafana 页面，成功好耶
 
 ![image-20251227002626885](./Deepflow.assets/image-20251227002626885.png)
+
+### 2.6 下载 deepflow-ctl
+
+```bash
+# 与当前 server 版本同步即可
+Version=v6.6
+
+# 使用变量下载
+curl -o /usr/bin/deepflow-ctl \
+  "https://deepflow-ce.oss-cn-beijing.aliyuncs.com/bin/ctl/$Version/linux/$(arch | sed 's|x86_64|amd64|' | sed 's|aarch64|arm64|')/deepflow-ctl"
+
+# 添加执行权限
+chmod a+x /usr/bin/deepflow-ctl
+```

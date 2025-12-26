@@ -3,6 +3,7 @@ import { onMount } from "svelte";
 
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
+import { siteConfig } from "../config";
 
 export let tags: string[];
 export let categories: string[];
@@ -34,8 +35,16 @@ interface Group {
 let groups: Group[] = [];
 
 function formatDate(date: Date) {
-	const month = (date.getMonth() + 1).toString().padStart(2, "0");
-	const day = date.getDate().toString().padStart(2, "0");
+	// 正确处理时区问题
+	const timeGap = siteConfig.timeZone || 8;
+	// 获取UTC时间戳
+	const utcTimestamp = date.getTime();
+	// 计算目标时区的时间戳
+	const targetTimestamp = utcTimestamp + (timeGap - date.getTimezoneOffset() / 60) * 60 * 60 * 1000;
+	const targetDate = new Date(targetTimestamp);
+	
+	const month = (targetDate.getMonth() + 1).toString().padStart(2, "0");
+	const day = targetDate.getDate().toString().padStart(2, "0");
 	return `${month}-${day}`;
 }
 
@@ -71,7 +80,13 @@ onMount(async () => {
 
 	const grouped = filteredPosts.reduce(
 		(acc, post) => {
-			const year = post.data.published.getFullYear();
+			// 正确处理时区问题获取年份
+			const timeGap = siteConfig.timeZone || 8;
+			const date = post.data.published;
+			const utcTimestamp = date.getTime();
+			const targetTimestamp = utcTimestamp + (timeGap - date.getTimezoneOffset() / 60) * 60 * 60 * 1000;
+			const targetDate = new Date(targetTimestamp);
+			const year = targetDate.getFullYear();
 			if (!acc[year]) {
 				acc[year] = [];
 			}
