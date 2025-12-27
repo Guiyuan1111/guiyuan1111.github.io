@@ -315,12 +315,8 @@ class TableOfContents extends HTMLElement {
                 
                 let badgeContent = '';
                 if (heading.depth === minDepth) {
-                    if (useJapaneseBadge && heading1Count - 1 < japaneseKatakana.length) {
-                        badgeContent = japaneseKatakana[heading1Count - 1];
-                    } else {
-                        badgeContent = heading1Count.toString();
-                    }
-                    heading1Count++;
+                    // 不显示任何标记
+                    badgeContent = '';
                 } else if (heading.depth === minDepth + 1) {
                     badgeContent = '<div class="transition w-2 h-2 rounded-[0.1875rem] bg-[var(--toc-badge-bg)]"></div>';
                 } else {
@@ -328,7 +324,7 @@ class TableOfContents extends HTMLElement {
                 }
                 
                 return `<a href="#${heading.slug}" class="px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl hover:bg-[var(--toc-btn-hover)] active:bg-[var(--toc-btn-active)] py-2">
-                    <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold ${depthClass} ${heading.depth === minDepth ? 'bg-[var(--toc-badge-bg)] text-[var(--btn-content)]' : ''}">
+                    <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold ${depthClass}">
                         ${badgeContent}
                     </div>
                     <div class="transition text-sm ${heading.depth <= minDepth + 1 ? 'text-50' : 'text-30'}">${heading.text}</div>

@@ -83,12 +83,8 @@ const generateTOC = () => {
 
 			// 只为H1标题生成badge
 			if (level === 1) {
-				h1Count++;
-				if (useJapaneseBadge && h1Count - 1 < japaneseHiragana.length) {
-					badge = japaneseHiragana[h1Count - 1];
-				} else {
-					badge = h1Count.toString();
-				}
+				// 不显示任何标记
+				badge = "";
 			}
 
 			items.push({ id: heading.id, text, level, badge });

@@ -16,6 +16,8 @@ date: 2025-12-24
 permalink: 251224-1
 ---
 
+## 0 
+
 ## 1 安装（Ubuntu Desktop）
 
 ### 1.1 部署 All-in-One K8s
