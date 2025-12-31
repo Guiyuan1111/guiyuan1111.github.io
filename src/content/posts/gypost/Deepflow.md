@@ -16,7 +16,11 @@ date: 2025-12-24
 permalink: 251224-1
 ---
 
-## 0 
+## 0 相关文献
+
+[Kubernetes](https://kubernetes.io/zh-cn/)
+
+[云原生-可观测性-零侵扰采集-全栈可观测-分布式追踪-eBPF-Wasm-DeepFlow可观测性平台](https://www.deepflow.io/zh/)
 
 ## 1 安装（Ubuntu Desktop）
 
