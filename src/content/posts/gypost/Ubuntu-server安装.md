@@ -137,6 +137,15 @@ sudo apt install open-vm-tools
 
 ### 3.4 FinalShell
 
+#### 3.4.0 前言
+
+为什么要使用finalshell这样的第三方shell而不是用原本Ubuntu自带的shell呢，于我而言有以下几个原因：
+
+1. 原版shell无法复制和粘贴
+2. 原版shell在vmware中使用有一定的延迟效应
+3. 原版shel无法实现鼠标翻滚查看历史命令
+4. finalshell挺美观的
+
 #### 3.4.1 配置Ubuntu
 
 1. 登录 Ubuntu 终端，更新包并安装 OpenSSH Server：

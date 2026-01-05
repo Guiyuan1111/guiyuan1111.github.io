@@ -48,16 +48,12 @@ sudo sh -c 'curl -o /usr/bin/sealos https://deepflow-ce.oss-cn-beijing.aliyuncs.
 ```bash
 # 安装openssh-server
 sudo apt install openssh-server -y
-
-# 启动 SSH 服务​
+# 启动 SSH 服务
 sudo systemctl start ssh
-
-# 设置开机自启（避免重启后服务失效）​
+# 设置开机自启（避免重启后服务失效）
 sudo systemctl enable ssh
-
-# 查看 SSH 服务状态（关键验证步骤）​
+# 查看 SSH 服务状态（关键验证步骤）
 sudo systemctl status ssh
-
 # 重启 SSH 服务（可能会用到）
 sudo systemctl restart ssh
 ```
