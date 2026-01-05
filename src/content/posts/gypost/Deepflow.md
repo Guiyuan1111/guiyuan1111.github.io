@@ -16,15 +16,23 @@ date: 2025-12-24
 permalink: 251224-1
 ---
 
-## 0 相关文献
+## 0 文献
 
-[Kubernetes](https://kubernetes.io/zh-cn/)
+### 0.1 K8s
+
+- [Kubernetes](https://kubernetes.io/zh-cn/)
+
+- Kubernetes发音：`/ˌkjuːbəˈnetɪs/`
+
+### 0.2 Deepflow
 
 [云原生-可观测性-零侵扰采集-全栈可观测-分布式追踪-eBPF-Wasm-DeepFlow可观测性平台](https://www.deepflow.io/zh/)
 
-## 1 安装（Ubuntu Desktop）
+## 1 安装
 
-### 1.1 部署 All-in-One K8s
+### 1.1 使用Ubuntu Desktop【已弃用】
+
+#### 1.1.1 部署 All-in-One K8s
 
 [All-in-One 快速部署](https://www.deepflow.io/docs/zh/ce-install/all-in-one/)
 
@@ -195,13 +203,13 @@ gy@gy-VM:~/桌面$ sudo sealos run docker.1ms.run/labring/kubernetes:v1.24.0 doc
 sudo kubectl taint node node-role.kubernetes.io/master- node-role.kubernetes.io/control-plane- --all
 ```
 
-### 1.2 安装 Helm
+#### 1.1.2 安装 Helm
 
 ```bash
 sudo sh -c 'curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && chmod 700 get_helm.sh && ./get_helm.sh'
 ```
 
-### 1.3 部署 All-in-One DeepFlow
+#### 1.1.3 部署 All-in-One DeepFlow
 
 ```bash
 # 使用root用户
@@ -216,11 +224,11 @@ EOF
 helm install deepflow -n deepflow deepflow/deepflow --version 6.6.018 --create-namespace -f values-custom.yaml
 ```
 
-## 2 安装（Ubuntu Sever）
+###  1.2 使用Ubuntu Sever
 
 有朋友建议，我部署Deepflow反正也不太需要桌面版，不如使用Sever版本，提高性能。我一想，也对，我反正只用命令行，何故不使用Sever版本呢。
 
-### 2.1 安装sealoa
+#### 1.2.1 安装sealoa
 
 先进入root用户
 
@@ -229,7 +237,7 @@ helm install deepflow -n deepflow deepflow/deepflow --version 6.6.018 --create-n
 curl -o /usr/bin/sealos https://deepflow-ce.oss-cn-beijing.aliyuncs.com/sealos/sealos && chmod +x /usr/bin/sealos
 ```
 
-### 2.2 部署 All-in-One K8s
+#### 1.2.2 部署 All-in-One K8s
 
 这里的`IP_ADDR`和`PASSWORD`对应的是**当前这台安装了 OpenSSH Server 的 Ubuntu 服务器**（即你正在操作的、IP 为`192.168.109.161`的机器）。
 
@@ -249,7 +257,7 @@ sealos run docker.1ms.run/labring/kubernetes:v1.24.0 docker.1ms.run/labring/cali
 kubectl taint node node-role.kubernetes.io/master- node-role.kubernetes.io/control-plane- --all
 ```
 
-### 2.3 安装 Helm
+#### 1.2.3 安装 Helm
 
 ```bash
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
@@ -275,7 +283,7 @@ helm install deepflow -n deepflow deepflow/deepflow --version 6.6.018 --create-n
 
 ![image-20251226121338294](./Deepflow.assets/image-20251226121338294.png)
 
-### 2.4 访问 Grafana 页面
+#### 1.2.4 访问 Grafana 页面
 
 执行 helm 部署 DeepFlow 时输出的内容提示了获取访问 Grafana 的 URL 和密码的命令，输出示例：
 
@@ -295,7 +303,7 @@ Grafana URL: http://192.168.109.161:32103
 Grafana auth: admin:deepflow
 ```
 
-### 2.5 地址无法访问及其修复
+#### 1.2.5 地址无法访问及其修复
 
 出了一些bug，我们现在来修复，由于尝试了各种办法，不知道哪个是关键的，所以我们把环境恢复到`访问 Grafana 页面`这一步
 
@@ -340,7 +348,7 @@ kubectl get pods -n deepflow
 
 ![image-20251227002626885](./Deepflow.assets/image-20251227002626885.png)
 
-### 2.6 下载 deepflow-ctl
+#### 1.2.6 下载 deepflow-ctl
 
 ```bash
 # 与当前 server 版本同步即可
